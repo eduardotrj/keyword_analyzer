@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter.filedialog import *
+from tkinter import messagebox as MessageBox
 
 
 class View:
@@ -17,7 +18,7 @@ class View:
         
         
     def create_widgets(self):
-        self.load_button = tk.Button(self.root, text="Load Document", command = self.controller.load_document)
+        self.load_button = tk.Button(self.root, text="Load Document", command = self.controller.get_keyworkds)
         self.load_button.pack(pady=10)
         self.create_table()
         
@@ -25,14 +26,18 @@ class View:
         """ Set the window size and position
         
         """
-        
+       
         #Calculate the center of the window.
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
-        left = (screen_width / 2) - (screen_width / 2)
-        top = (screen_height / 2) - (screen_height / 2)
+        
+        window_width = screen_width/2
+        window_height = screen_height/2
+        
+        left = (screen_width / 2) - (window_width / 2)
+        top = (screen_height / 2) - (window_height / 2)
         self.root.geometry('%dx%d+%d+%d' % (
-            screen_width, screen_height,left, top
+            window_width, window_height,left, top
             )) 
         
         
@@ -52,7 +57,19 @@ class View:
         self.tree.pack(expand=True, fill='both')
         
         
-    def populate_table(self, data):
+    # def populate_table(self, data):
+    #     """insert information inside of the columns
+
+    #     Args:
+    #         data (_type_): _description_
+    #     """
+        
+    #     self.tree.delete(*self.tree.get_children())  # Clear previous data
+    #     for row in data:
+    #         self.tree.insert("", tk.END, values=row)
+            
+            
+    def populate_table(self, keywords:dict, files: dict, senteces: dict):
         """insert information inside of the columns
 
         Args:
@@ -60,8 +77,31 @@ class View:
         """
         
         self.tree.delete(*self.tree.get_children())  # Clear previous data
-        for row in data:
-            self.tree.insert("", tk.END, values=row)
+        # for row in data:
+        #     self.tree.insert("", tk.END, values=row)
+            
+            
+    
+        
+   
+        for keyword, number in keywords.items():
+            
+            keyword_numbers = keyword + " (" + str(number) + ")"
+            
+            documents = files[keyword]
+            
+            sentences = senteces[keyword]
+            
+                
+            self.tree.insert("", tk.END, values=(keyword_numbers, documents, sentences))    
+                
+                
+                
+                
+      
+            
+    def alert(self, title, message):
+        MessageBox.showinfo(title, message)
             
             
    
