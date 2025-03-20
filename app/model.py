@@ -1,9 +1,9 @@
 from keybert import KeyBERT as KeyB
 
 
-class KeywordModel:
+class Model:
     def __init__(self):
-        self.model = KeyB()
+        self.scan_model = KeyB()
 
     def extract_keywords(self, text, num_keywords=20):
         """ Extract the most important keywords from the text.
@@ -15,5 +15,5 @@ class KeywordModel:
         Returns:
             _type_: List with keywords
         """
-        keywords = self.model.extract_keywords(text, keyphrase_ngram_range=(1, 2), stop_words='english', top_n=num_keywords)
+        keywords = self.scan_model.extract_keywords(text, keyphrase_ngram_range=(1, 2), stop_words='english', top_n=num_keywords)
         return [(kw[0],) for kw in keywords]  # Returning as a tuple for table compatibility
