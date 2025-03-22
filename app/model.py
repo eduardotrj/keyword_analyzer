@@ -3,8 +3,27 @@ import re
 import os
 
 
+""" 
+✶ To use OpenAi LLM. ✶
+"""
+# import openai
+# from keybert.llm import OpenAI
+# from keybert import KeyLLM
+
+# class IA_Config:
+#     client = openai.OpenAI(api_key=MY_API_KEY)
+#     llm = OpenAI(client)
+#     kw_model = KeyLLM(llm)
+
+
 class Model:
+    
+    """ Class to manage data.
+    """
     def __init__(self):
+        
+        # Change for IA model.
+        # self.scan_model = IA_Config.kw_model
         self.scan_model = KeyB()
         
         
@@ -27,22 +46,17 @@ class Model:
     
     
     
-    def merge_files(self, list_files:dict):
-        total_text = ""
-        for text in list_files.values():
-            total_text += text + ". "
-   
-        return total_text
+    
         
                         
         
 
-    def extract_keywords(self, text, num_keywords=50):
+    def extract_keywords(self, text: str="", num_keywords: int=50):
         """ Extract the most important keywords from the text.
 
         Args:
-            text (_type_): int
-            num_keywords (int, optional): Number of keywords extracted. Defaults to 20.
+            text (str): Text to analyze.
+            num_keywords (int, optional): Number of keywords extracted. Defaults to 50.
 
         Returns:
             _type_: List with keywords
@@ -53,45 +67,76 @@ class Model:
     
     
     def count_words(self, words: tuple, text: str):
+        
+        """
+            Count how many times is a word in the text.
+            
+        Args:
+            words (tuple): Keywords.
+            text (str): Text to analyze.
+
+        Returns:
+            (dict): Dictionary {keywords (str): times (int)}.
+        """
         words_in_text = re.findall(r'\b\w+\b', text.lower()) 
         
-        word_counts = {
-            word[0]: words_in_text.count(word[0])
-            for word in words
-            if words_in_text.count(word[0]) > 1
-        }
+        # List comprehension  
+        # word_counts = {
+        #     word[0]: words_in_text.count(word[0])
+        #     for word in words
+        #     if words_in_text.count(word[0]) > 1
+        # }
         
-        # word_counts = {}
-        # for word in words:
-        #     word = word[0]      # Get word from 
-        #     times = words_in_text.count(word)
-        #     if times > 1:       # Only takes repeated words
-        #         word_counts[word] = times
+        word_counts = {}
+        for word in words:
+            word = word[0]      # Get word from 
+            times = words_in_text.count(word)
+            if times > 1:       # Only takes repeated words
+                word_counts[word] = times
 
         return word_counts
      
      
      
     def get_phrases(self, words: dict, text: str):
-        sentences = re.split(r'(?<=[.!?])\s+', text.lower())
         
-        keyword_sentences = { word: [sentence for sentence in sentences if word in sentence] for word in words.keys() }
-             
-        # keyword_sentences = {}                
-        # for word in words.keys():
-        #     print(word)
+        """ Extract all phrases where a keyword is.
+        
+        Args:
+            words (dict): Keywords.
+            text (str): Text to analyze.
+
+        Returns:
+            (dict): Dictionary {keywords (str): phrases (list with strings)}.
+        """
+        sentences = re.split(r'(?<=[.!?])\s+', text.lower())
+              
+        keyword_sentences = {}                
+        for word in words.keys():
             
-        #     keyword_sentences[word] = []
-        #     for sentence in sentences:
+            keyword_sentences[word] = []
+            for sentence in sentences:
                 
-        #         if word in sentence:
-        #             keyword_sentences[word].append(sentence)
+                # To avoid get wrong sentences.
+                pattern = r'\b' + word + r'\b'
+                match = re.search(pattern, sentence)
+                
+                if match:
+                    keyword_sentences[word].append(sentence.capitalize())
 
         return keyword_sentences
     
     
     def get_document(self, words: dict, files: dict):
-        
+        """_summary_
+
+        Args:
+            words (dict): Keywords
+            files (dict): All documents to analyze.
+
+        Returns:
+            (dict): Dictionary {keywords (str): files (list with strings)}.
+        """
         keywords_files = {}
         
         for word in words.keys():
@@ -99,12 +144,21 @@ class Model:
             
             for file, text in files.items():
                 if word in text.lower():
-                    keywords_files[word].append(file)
+                    keywords_files[word].append(file.replace(".txt", ", "))
+        
+        # List comprehension:            
+        # keywords_files = { word: [file.replace(".txt", ", ") for file, 
+        #                           text in files.items() if word in text.lower()] 
+        #                   for word in words.keys()
+        # }
                     
         return keywords_files
   
     
     
+        
+    
+        
             
         
         

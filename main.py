@@ -11,7 +11,4 @@ def start_keyword_analyzer():
 if __name__ == "__main__":
     start_keyword_analyzer()
     
-    
-    # root = tk.Tk()
-    # app = Controller(root)
-    # root.mainloop()
+  
